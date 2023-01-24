@@ -5,6 +5,7 @@ db = SQLAlchemy()
 
 DEFAULT_IMAGE_URL = "https://freesvg.org/img/abstract-user-flat-4.png"
 
+
 def connect_db(app):
     db.app = app
     db.init_app(app)
@@ -32,14 +33,15 @@ class User(db.Model):
                             backref="user",
                             cascade="all, delete-orphan")
 
+
 class Post(db.Model):
     __tablename__ = 'post'
 
     id = db.Column(db.Integer,
-                    primary_key=True,)
+                   primary_key=True,)
 
     title = db.Column(db.Text,
-                        nullable=False)
+                      nullable=False)
 
     content = db.Column(db.Text,
                         nullable=False)
@@ -47,3 +49,34 @@ class Post(db.Model):
     user_id = db.Column(db.Integer,
                         db.ForeignKey('user.id'),
                         nullable=False)
+
+
+class PostTag(db.Model):
+    """Tag on a post."""
+
+    __tablename__ = "post_tag"
+
+    post_id = db.Column(db.Integer,
+                        db.ForeignKey('post.id'),
+                        primary_key=True)
+
+    tag_id = db.Column(db.Integer,
+                       db.ForeignKey('tag.id'),
+                       primary_key=True)
+
+
+class Tag(db.Model):
+    """Tags to be added to a post."""
+
+    __tablename__ = 'tag'
+
+    id = db.Column(db.Integer,
+                   primary_key=True)
+
+    name = db.Column(db.Text,
+                     nullable=False,
+                     unique=True)
+
+    posts = db.relationship('Post',
+                            secondary="post_tag",
+                            backref="tag",)

@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+
+{% block title %}Tags{% endblock %}
+
+{% block content %}
+
+<h1>Tags</h1>
+
+<ul>
+    {% for tag in tag %}
+    <li><a href="/tags/{{tag.id}}">{{tag.name}}</a></li>
+    {% endfor %}
+</ul>
+
+<p>
+    <button type='submit'><a class="btn btn-primary" href="/">Home</a></button>
+    <button type='submit'><a class="btn btn-primary" href="/tags/new">Add Tag</a></button>
+</p>
+
+{% endblock %}
