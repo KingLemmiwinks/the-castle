@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if not g.user %}
+<h1 class="display-4">Welcome!</h1>
+<p class="lead">Login or Register to Start Saving Your Spells!</p>
+{% endif %}
+
+<div class="spell-div row">
+    {%for spell in spells%}
+    <div class="col-3">
+        <div class="row mb-4">
+            <form method="POST" action="/spells/{{ spell.index }}/{{spell.name}}/like" class="spell-like col-1">
+                <button class="
+                          btn
+                          btn-sm
+                          {{'btn-primary' if spell.index in likes else 'btn-secondary'}}">
+                    <i class="fa fa-thumbs-up"></i>
+                </button>
+            </form>
+            <a href="/spells/{{spell.index}}" class="col">{{spell.name}}</a>
+        </div>
+    </div>
+    {%endfor%}
+</div>
+
+
+{% endblock %}
