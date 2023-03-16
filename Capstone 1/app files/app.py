@@ -5,6 +5,7 @@ from flask import Flask, request, redirect, render_template, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from forms import RegisterForm, LoginForm
 from models import db, connect_db, User, Likes
+from sqlalchemy.exc import IntegrityError
 
 API_BASE_URL = "https://www.dnd5eapi.co/api"
 CURR_USER_KEY = "curr_user"
@@ -70,12 +71,18 @@ def register():
     form = RegisterForm()
 
     if form.validate_on_submit():
-        name = form.username.data,
-        pwd = form.password.data
+        try:
+            name = form.username.data,
+            pwd = form.password.data
 
-        user = User.register(name, pwd)
-        db.session.add(user)
-        db.session.commit()
+            user = User.register(name, pwd)
+            db.session.add(user)
+            db.session.commit()
+
+        except IntegrityError as e:
+            flash("Username already taken", 'danger')
+            return render_template('register.html', form=form)
+
 
         do_login(user)
         session["user_id"] = user.id

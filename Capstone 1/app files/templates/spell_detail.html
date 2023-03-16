@@ -1,109 +1,130 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <div class="spell-div">
-        <h2>{{spell_detail.name}}</h2>
-        <div><i>Level {{spell_detail.level}} {{spell_detail.school.name}}</i></div>
-        
-        <div><b>Casting Time</b>: {{spell_detail.casting_time}}</div>
-        <div><b>Range</b>: {{spell_detail.range}}</div>
-        <div><b>Components</b>: {{spell_detail.components}}</div>
-        <div><b>Duration</b>: {{spell_detail.duration}}</div>
-        
-        <!-- Combine text from Description and Higher Level Casting -->
-        <p><b>Description</b>: {{spell_detail.desc}}</p>
-        <p><b>Higher Level Casting</b>: {{spell_detail.higher_level}}</p>
-        
-        <!-- Heal -->
-        <!-- If condition displaying EITHER Heal_At_Slot_Level OR Heal_At_Character_Level -->
-        {% if spell_detail.heal_at_slot_level is defined %}
-        <div style="margin-bottom: 0px"><b>Heal</b>:</div>
-        <div style="margin-left:20px; margin-top: 0px">
-            {% for level, dice in spell_detail.heal_at_slot_level.items() %}
-            <div style="margin:0px">Slot Level {{level}} : {{dice}}</div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        
-        {% if spell_detail.heal_at_character_level is defined %}
-        <div style="margin-bottom: 0px"><b>Heal</b>:</div>
-        <div style="margin-left:20px; margin-top: 0px">
-            {% for level, dice in spell_detail.heal_at_character_level.items() %}
-            <div style="margin:0px">Character Level {{level}} : {{dice}}</div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        <!-- End Condition -->
-        
-        <!-- Damage -->
-        <!-- If condition displaying EITHER Damage_At_Slot_Level OR Damage_At_Character_Level -->
-        {% if spell_detail.damage is defined %}
-        {% if spell_detail.damage.damage_at_slot_level is defined %}
-        <div style="margin-bottom: 0px"><b>{{spell_detail.damage.damage_type.name}} Damage</b>:</div>
-        <div style="margin-left:20px; margin-top: 0px">
-            {% for level, dice in spell_detail.damage.damage_at_slot_level.items() %}
-            <div style="margin:0px">Slot Level {{level}} : {{dice}}</div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        
-        {% if spell_detail.damage.damage_at_character_level is defined %}
-        <div style="margin-bottom: 0px"><b>{{spell_detail.damage.damage_type.name}} Damage</b>:</div>
-        <div style="margin-left:20px; margin-top: 0px">
-            {% for level, dice in spell_detail.damage.damage_at_character_level.items() %}
-            <div style="margin:0px">Character Level {{level}} : {{dice}}</div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        {% endif %}
-        <!-- End Condition -->
-        
-        <!-- Material -->
-        <!-- List all materials the spell requires in order to be cast -->
-        {% if spell_detail.material is not defined %}
-        <div><b>Material</b>: None</div>
-        {% else %}
-        <div><b>Material</b>: {{spell_detail.material}}</div>
-        {% endif %}
-        
-        <!-- Area of Effect -->
-        <!-- Display Area of Effect; If none, display none -->
-        <div style="margin-bottom: 0px"><b>Area of Effect</b>:</div>
-        {% if spell_detail.area_of_effect is not defined %}
-        <div style="margin-left:20px; margin-top: 0px">
-            <b>Type</b>: None
-            </br>
-            <b>Size</b>: None
-        </div>
-        {% else %}
-        <div style="margin-left:20px; margin-top: 0px">
-            <b>Type</b>: {{spell_detail.area_of_effect.type}}
-            </br>
-            <b>Size</b>: {{spell_detail.area_of_effect.size}} feet
-        </div>
-        {% endif %}
-        
-        <!-- Ritual and Concentration -->
-        <p><b>Ritual</b>: {{spell_detail.ritual}}</p>
-        <p><b>Concentration</b>: {{spell_detail.concentration}}</p>
-        
-        <!-- Classes -->
-        <!-- List all Classes the spell is available for -->
-        <div style="margin-bottom: 0px"><b>Classes</b>:</div>
-        <div style="margin-left:20px; margin-top: 0px">
-            {% for class in spell_detail.classes %}
-            <div style="margin:0px">{{class.name}}</div>
-            {% endfor %}
-        </div>
-        
-        <!-- Subclasses -->
-        <!-- List all Subclasses that the spell is available for -->
-        <div style="margin-bottom: 0px"><b>Subclasses</b>:</div>
-        <div style="margin-left:20px; margin-top: 0px">
-            {% for subclass in spell_detail.subclasses %}
-            <div style="margin:0px">{{subclass.name}}</div>
-            {% endfor %}
-        </div>
+
+<div class="spell-div mt-0 px-3 pt-3 h-100">
+    <h2>{{spell_detail.name}}</h2>
+    <div><i>Level {{spell_detail.level}} {{spell_detail.school.name}}</i></div>
+
+    <div><b>Casting Time</b>: {{spell_detail.casting_time}}</div>
+    <div><b>Range</b>: {{spell_detail.range}}</div>
+    <div><b>Components</b>: {{spell_detail.components}}</div>
+    <div><b>Duration</b>: {{spell_detail.duration}}</div>
+    <div><b>Description</b>: {{spell_detail.desc}}</div>
+
+    <!-- Higher Level Casting -->
+    {% if spell_detail.higher_level|length == 0 %}
+    <div><b>Higher Level Casting</b>: This spell may not be cast at a higher level.</div>
+    {% else %}
+    <div><b>Higher Level Casting</b>: {{spell_detail.higher_level}}</div>
+    {% endif %}
+
+
+    <!-- Heal -->
+    <!-- If condition displaying EITHER Heal_At_Slot_Level OR Heal_At_Character_Level -->
+    {% if spell_detail.heal_at_slot_level is defined %}
+    <div style="margin-bottom: 0px"><b>Heal</b>:</div>
+    <div style="margin-left:20px; margin-top: 0px">
+        {% for level, dice in spell_detail.heal_at_slot_level.items() %}
+        <div style="margin:0px">Slot Level {{level}} : {{dice}}</div>
+        {% endfor %}
     </div>
+    {% endif %}
+
+    {% if spell_detail.heal_at_character_level is defined %}
+    <div style="margin-bottom: 0px"><b>Heal</b>:</div>
+    <div style="margin-left:20px; margin-top: 0px">
+        {% for level, dice in spell_detail.heal_at_character_level.items() %}
+        <div style="margin:0px">Character Level {{level}} : {{dice}}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <!-- End Condition -->
+
+    <!-- Damage -->
+    <!-- If condition displaying EITHER Damage_At_Slot_Level OR Damage_At_Character_Level -->
+    {% if spell_detail.damage is defined %}
+    {% if spell_detail.damage.damage_at_slot_level is defined %}
+    <div style="margin-bottom: 0px"><b>{{spell_detail.damage.damage_type.name}} Damage</b>:</div>
+    <div style="margin-left:20px; margin-top: 0px">
+        {% for level, dice in spell_detail.damage.damage_at_slot_level.items() %}
+        <div style="margin:0px">Slot Level {{level}} : {{dice}}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if spell_detail.damage.damage_at_character_level is defined %}
+    <div style="margin-bottom: 0px"><b>{{spell_detail.damage.damage_type.name}} Damage</b>:</div>
+    <div style="margin-left:20px; margin-top: 0px">
+        {% for level, dice in spell_detail.damage.damage_at_character_level.items() %}
+        <div style="margin:0px">Character Level {{level}} : {{dice}}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endif %}
+    <!-- End Condition -->
+
+    <!-- Material -->
+    <!-- List all materials the spell requires in order to be cast -->
+    {% if spell_detail.material is not defined %}
+    <div><b>Material</b>: None</div>
+    {% else %}
+    <div><b>Material</b>: {{spell_detail.material}}</div>
+    {% endif %}
+
+    <!-- Area of Effect -->
+    <!-- Display Area of Effect; If none, display none -->
+    <div style="margin-bottom: 0px"><b>Area of Effect</b>:</div>
+    {% if spell_detail.area_of_effect is not defined %}
+    <div style="margin-left:20px; margin-top: 0px">
+        <b>Type</b>: None
+        </br>
+        <b>Size</b>: None
+    </div>
+    {% else %}
+    <div style="margin-left:20px; margin-top: 0px">
+        <b>Type</b>: {{spell_detail.area_of_effect.type}}
+        </br>
+        <b>Size</b>: {{spell_detail.area_of_effect.size}} feet
+    </div>
+    {% endif %}
+
+    <!-- Ritual -->
+    {% if spell_detail.ritual == False %}
+    <div><b>Ritual</b>: This spell does not require a ritual.</div>
+    {% endif %}
+
+    {% if spell_detail.ritual == True %}
+    <div><b>Ritual</b>: This spell requires a ritual.</div>
+    {% endif %}
+
+    <!-- Concentration -->
+    {% if spell_detail.concentration == False %}
+    <div><b>Concentration</b>: This spell does not require concentration.</div>
+    {% endif %}
+    
+    {% if spell_detail.concentration == True %}
+    <div><b>Concentration</b>: This spell requires concentration.</div>
+    {% endif %}
+
+    <!-- Classes -->
+    <!-- List all Classes the spell is available for -->
+    <div style="margin-bottom: 0px"><b>Classes</b>:</div>
+    <div style="margin-left:20px; margin-top: 0px">
+        {% for class in spell_detail.classes %}
+        <div style="margin:0px">{{class.name}}</div>
+        {% endfor %}
+    </div>
+
+    <!-- Subclasses -->
+    <!-- List all Subclasses that the spell is available for -->
+    <div style="margin-bottom: 0px"><b>Subclasses</b>:</div>
+    <div style="margin-left:20px; margin-top: 0px">
+        {% for subclass in spell_detail.subclasses %}
+        <div style="margin:0px">{{subclass.name}}</div>
+        {% endfor %}
+    </div>
+
+</div>
 
 {% endblock %}

@@ -2,26 +2,28 @@
 {% block content %}
 
 
-<div class="spell-div row">
+<div class="spell-div mt-0 px-3 pt-3 h-100">
     {%if likes|length < 1 %}
     <p class="lead">Go Favorite a Spell!</p>
     {%endif%}
 
-    {%for like in likes%}
-    <div class="col-3">
-        <div class="row mb-4">
-            <form method="POST" action="/favorites/{{ like.spell_index }}/remove" class="spell-like col-1">
-                <button class="
-                          btn
-                          btn-sm
-                          btn-primary">
-                    <i class="fa fa-thumbs-up"></i>
-                </button>
-            </form>
-            <a href="/spells/{{like.spell_index}}" class="col">{{like.spell_name}}</a>
+    <div class="row">
+        {%for like in likes%}
+        <div class="col-4">
+            <div class="row mb-4">
+                <form method="POST" action="/favorites/{{ like.spell_index }}/remove" class="spell-like col-1 col-md-2">
+                    <button class="
+                            btn
+                            btn-sm
+                            my-btn-primary">
+                        <i class="fa fa-star"></i>
+                    </button>
+                </form>
+                <a href="/spells/{{like.spell_index}}" class="col">{{like.spell_name}}</a>
+            </div>
         </div>
+        {%endfor%}
     </div>
-    {%endfor%}
 </div>
 
 
