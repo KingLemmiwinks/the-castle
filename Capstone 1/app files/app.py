@@ -36,17 +36,6 @@ def home():
 ############################## USER ROUTES ##############################
 
 
-@app.before_request
-def add_user_to_g():
-    """If we're logged in, add curr_user to Flask global."""
-
-    if CURR_USER_KEY in session:
-        g.user = User.query.get(session[CURR_USER_KEY])
-
-    else:
-        g.user = None
-
-
 def do_login(user):
     """Login user."""
 
@@ -58,6 +47,17 @@ def do_logout():
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+
+
+@app.before_request
+def add_user_to_g():
+    """If we're logged in, add curr_user to Flask global."""
+
+    if CURR_USER_KEY in session:
+        g.user = User.query.get(session[CURR_USER_KEY])
+
+    else:
+        g.user = None
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -136,6 +136,7 @@ def logout():
 
 ############################## SPELL ROUTES ##############################
 
+
 def get_all_spells():
     """Call the API for all spells."""
 
@@ -199,23 +200,37 @@ def add_like(spell_index, spell_name):
 
     if liked_spell_index in user_likes:
         # Unfavorite
-
-        Likes.query.filter(Likes.user_id == g.user.id, Likes.spell_index == spell_index).delete()
+        remove_like_from_db(spell_index)
 
     else:
-        # Favorite a spell
-        # Build row data
-        new_like = Likes()
-        new_like.spell_index = spell_index
-        new_like.user_id = g.user.id
-        new_like.spell_name = spell_name
-
-        g.user.likes.append(new_like)
+        # Favorite a spell        
+        add_like_to_db(spell_index, spell_name)
         
+
+    return redirect("/spells")
+
+
+############################## FAVORITES ROUTES ##############################
+
+
+def add_like_to_db(spell_index, spell_name):
+    """Build row data and add spell to likes table"""
+    new_like = Likes()
+    new_like.spell_index = spell_index
+    new_like.user_id = g.user.id
+    new_like.spell_name = spell_name
+
+    g.user.likes.append(new_like)
 
     db.session.commit()
 
-    return redirect("/spells")
+
+def remove_like_from_db(spell_index):
+    """Search for the liked spell index from the current user and remove the like."""
+    Likes.query.filter(Likes.user_id == g.user.id,
+                       Likes.spell_index == spell_index).delete()
+
+    db.session.commit()
 
 
 @app.route('/favorites')
@@ -241,11 +256,9 @@ def remove_favorite(spell_index):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    # Unfavorite
-
-    Likes.query.filter(Likes.user_id == g.user.id,
-                        Likes.spell_index == spell_index).delete()
-
-    db.session.commit()
+    remove_like_from_db(spell_index)
 
     return redirect("/favorites")
+
+
+
